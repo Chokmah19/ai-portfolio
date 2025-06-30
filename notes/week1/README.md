@@ -33,6 +33,17 @@ ML是AI的分支，專注於開發可分析資料以做出決策或預測的電�
 
 #### Prompt skill
 - 5-step prompt framework
+    - Task        -> 角色、格式
+    - Context     -> 上下文或必要的詳細資訊
+    - References
+    - Evaluate
+    - Iterate     -> 評估輸出並確定沒有得到所需的內容，則可以通過添加更多資訊或調整提示來重試
+
+    Thoughtfully
+    Create
+    Really
+    Excellent
+    Inputs
 
 #### AI的風險與危害
 - 分配傷害  
