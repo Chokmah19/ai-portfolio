@@ -35,11 +35,10 @@ ML是AI的分支，專注於開發可分析資料以做出決策或預測的電�
 - 5-step prompt framework
     - Task        -> 角色、格式
     - Context     -> 上下文或必要的詳細資訊
-    - References
-    - Evaluate
-    - Iterate     -> 評估輸出並確定沒有得到所需的內容，則可以通過添加更多資訊或調整提示來重試
-
-    Thoughtfully Create Really Excellent Inputs -> 深思熟慮地創造真正出色的輸入
+    - References  -> 可提供生成式AI工作範例，這可能意味著要求它學習特定參考資料的語氣、風格或長度。提供多個參考資料也被稱為few shot prompting.
+    - Evaluate    -> 在使用任何 AI 生成的資訊、文本或材料之前，先嚴格評估輸出是否準確、公正、相關且一致
+    - Iterate     -> 評估輸出並確定沒有得到所需的內容，則可以通過添加更多資訊或調整提示來重試，Always Be Iterating.
+    - Thoughtfully Create Really Excellent Inputs -> 深思熟慮地創造真正出色的輸入
 
 #### AI的風險與危害
 - 分配傷害  
