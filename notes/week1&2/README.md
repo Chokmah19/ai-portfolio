@@ -81,7 +81,10 @@ ML是AI的分支，專注於開發可分析資料以做出決策或預測的電�
     - Chain-of-thought(CoT)
         - 要求生成式AI工具解釋其推理或逐步描述它是如何獲得特定結果的。此方法可以瞭解生成式AI工具的推理方法，可根據其輸出做出更好的決策。
     - Tree-of-thought(ToT)
-        - Tree of Thought要求工具同時探索多個推理路徑。它會邊走邊評估，有助於獲得最佳結果。
+        - 是一種一次探索多種可能的解決方案的技術，可幫助使用者找到最有效的方法。
+- Meta-prompting
+    - Prompt generation strategies
+    - Prompt refinement strategies
 
 ### 技巧筆記
 - 使用清楚指令式語句：「Summarize the text in 2 sentences」  
