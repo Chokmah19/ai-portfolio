@@ -1,5 +1,4 @@
-# Week 1 - Google AI Essentials
-# Week 2 - Prompting Essentials
+# Week 1 - Google AI Essentials & Week 2 - Prompting Essentials
 
 ## ✅ 本週目標
 - 完成 Google AI Essentials 課程
@@ -26,8 +25,9 @@ ML是AI的分支，專注於開發可分析資料以做出決策或預測的電�
     利用科技對某些人造成不利影響，進而對他們與他人的關係產生負面影響，或導致他們喪失自我意識和自主性
 
 ### LLM sampling parameters
-- 調整模型的參數以影響選擇輸出的概率，生成的文字風格和品質。以下參數用以控制文字生成過程中的**隨機性**和**創造性**([text](https://blog.miniasp.com/post/2024/05/21/LLM-Temperature-Top-P-Nucleus-Sampling-Top-K))
-- Temperature
+- 調整模型的取樣參數以影響選擇輸出的概率，生成的文字風格和品質。採樣參數是影響此過程的護欄，允許您擴展或限制生成 AI 工具在創建其輸出時從中選擇的選項池。以下參數用以控制文字生成過程中的**隨機性**和**創造性**([ref.](https://blog.miniasp.com/post/2024/05/21/LLM-Temperature-Top-P-Nucleus-Sampling-Top-K))
+- Temperature  
+    決定該池中這些選項的概率的採樣參數稱為溫度。
 - Top-P
 - Top-K
 
