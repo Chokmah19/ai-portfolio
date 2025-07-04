@@ -3,4 +3,4 @@ My AI Exercise Portfolio
 
 ## 📚 Weekly Notes
 
-- [Week 1 - Google AI Essentials](./notes/week1/README.md)
+- [Week1-2_Google_ai_note](./notes/week1-2_Google_ai_note/README.md)
