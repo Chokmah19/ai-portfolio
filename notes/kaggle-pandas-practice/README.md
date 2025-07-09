@@ -4,7 +4,7 @@
 
 ### A. 核心概念
 - 如何從不同格式（CSV、Excel、JSON）讀取資料，以及如何儲存 DataFrame。
-    - DateFrame : 類似試算表，是一個****帶有標籤**的二維資料結構，其各列可以包含**不同類型**的資料 。
+    - DateFrame : 類似試算表，是一個**帶有標籤**的二維資料結構，其各列可以包含**不同類型**的資料 。
 
 ### B. 常用指令
 
@@ -29,26 +29,26 @@ df.to_excel('titanic.xlsx', index=False)
 
 ### D. Review Prompt
 - 如何在讀取時直接篩掉空值過多的欄位？  
-在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案，如：
+在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案。  
 ```python
 df = pd.read_csv("data.csv")  # 讀入 CSV 為 DataFrame
 ```
-接著檢查各欄的空值比例，例如：
+接著檢查各欄的空值比例，例如：  
 ```python
 df.isnull().mean()
 ```
-若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。
+若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。  
 ```python
 # 只保留至少有 3 個非空值的欄位（少於3個非空即丟棄該欄）
 df = df.dropna(axis=1, thresh=3)
 ```
-此處 thresh=3 表示「非空元素最低數量」，少於此數量就刪除欄位
+此處 thresh=3 表示「非空元素最低數量」，少於此數量就刪除欄位  
 如果想按照百分比丟棄缺失值過多的欄，也可以將 thresh 設為 int(df.shape[0]*ratio)，例如刪除缺失超過一半的欄：
 ```python
 thresh = int(df.shape[0]*0.5)
 df = df.dropna(axis=1, thresh=thresh)
 ```
-    - 這樣做能清理資料，去掉無用或資訊太少的欄位，學習到的技能包括利用 Pandas 的缺失值處理函數（dropna）、理解 axis 和 thresh 參數的意義，以及資料清洗的邏輯（刪除缺失值過多的欄可以減少分析干擾）
+> 這樣做能清理資料，去掉無用或資訊太少的欄位，學習到的技能包括利用 Pandas 的缺失值處理函數（dropna）、理解 axis 和 thresh 參數的意義，以及資料清洗的邏輯（刪除缺失值過多的欄可以減少分析干擾）
 - 如果要讀取多個 CSV，合併成一個 DataFrame，指令該怎麼寫？
 
 
