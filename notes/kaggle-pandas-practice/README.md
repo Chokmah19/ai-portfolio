@@ -29,28 +29,42 @@ df.to_excel('titanic.xlsx', index=False)
 
 ### D. Review Prompt
 - 如何在讀取時直接篩掉空值過多的欄位？  
-在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案。  
+    - 在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案。  
 ```python
 df = pd.read_csv("data.csv")  # 讀入 CSV 為 DataFrame
 ```
-接著檢查各欄的空值比例，例如：  
+    - 接著檢查各欄的空值比例，例如：  
 ```python
 df.isnull().mean()
 ```
-若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。  
+    - 若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。  
 ```python
 # 只保留至少有 3 個非空值的欄位（少於3個非空即丟棄該欄）
 df = df.dropna(axis=1, thresh=3)
 ```
-此處 thresh=3 表示「非空元素最低數量」，少於此數量就刪除欄位  
+    - 此處 thresh=3 表示「非空元素最低數量」，少於此數量就刪除欄位  
 如果想按照百分比丟棄缺失值過多的欄，也可以將 thresh 設為 int(df.shape[0]*ratio)，例如刪除缺失超過一半的欄：
 ```python
 thresh = int(df.shape[0]*0.5)
 df = df.dropna(axis=1, thresh=thresh)
 ```
 > 這樣做能清理資料，去掉無用或資訊太少的欄位，學習到的技能包括利用 Pandas 的缺失值處理函數（dropna）、理解 axis 和 thresh 參數的意義，以及資料清洗的邏輯（刪除缺失值過多的欄可以減少分析干擾）
-- 如果要讀取多個 CSV，合併成一個 DataFrame，指令該怎麼寫？
 
+- 如果要讀取多個 CSV，合併成一個 DataFrame，指令該怎麼寫？
+   - **列出檔案清單**：使用 Python 的 os 或 glob 模組，取得指定資料夾中所有 CSV 的路徑列表。
+       - 學到檔案 I/O 和檔案篩選（使用 os.listdir 並判斷檔名副檔名）。
+   - **讀取並存成 DataFrame 清單**：用迴圈或列表解析（list comprehension）對每個檔案呼叫 pd.read_csv，並將結果存入一個列表。
+       - 學到使用列表解析批次執行函數。
+   - **合併所有 DataFrame**：使用 pd.concat() 將列表中的所有 DataFrame 併成一個大 DataFrame。
+       - ignore_index=True 表示合併後重置索引（不保留原檔案的索引），使最終索引連續。concat 函數會自動將欄位對齊（若不同檔案有不同欄，則缺失值以 NaN 填補）。這一步學到資料整合與索引管理：將多個表格串起來，便於後續一起分析。也可用generator 或 map 省掉中間列表。
+
+```python
+import pandas as pd, os
+folder_path = "data" # CSV 所在資料夾
+csv_files = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith(".csv")]
+all_data = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=True)
+```
+> 很多時候資料分散在多個檔案，透過自動讀取合併可以避免手動複製，快速整合成統一的資料集，方便後續分析和視覺化
 
 ## 2. Indexing, Selecting & Assigning
 
