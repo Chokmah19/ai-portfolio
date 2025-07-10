@@ -30,7 +30,8 @@ df.to_excel('titanic.xlsx', index=False)
 ### D. Review Prompt
 - 如何在讀取時直接篩掉空值過多的欄位？
     - 在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案。
-    - 接著檢查各欄的空值比例，若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。 
+    - 接著檢查各欄的空值比例，若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。
+    - 如果想按照百分比丟棄缺失值過多的欄，也可以將 thresh 設為 int(df.shape[0]*ratio)
 ```python
 df = pd.read_csv("data.csv")  # 讀入 CSV 為 DataFrame
 df.isnull().mean()
@@ -39,9 +40,8 @@ df.isnull().mean()
 df = df.dropna(axis=1, thresh=3)
 ```
 
-    - 如果想按照百分比丟棄缺失值過多的欄，也可以將 thresh 設為 int(df.shape[0]*ratio)，例如刪除缺失超過一半的欄：
-
 ```python
+# 刪除缺失超過一半的欄
 thresh = int(df.shape[0]*0.5)
 df = df.dropna(axis=1, thresh=thresh)
 ```
@@ -68,34 +68,72 @@ all_data = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=Tru
 
 ### A. 核心概念
 - 如何用標籤與位置存取列與欄，以及如何新增、修改資料。
+    - 負數也可用以選擇，會從最後值開始往前計數
 
 ### B. 常用指令
 
-| 功能            | 指令                                   | 說明                             |
+| 功能            | 指令                                   | 說明                        |
 |---------------|--------------------------------------|--------------------------------|
-| 標籤存取資料     | `df.loc[row_label, col_label]`       | 以索引／欄名存取                     |
-| 位置存取資料     | `df.iloc[row_idx, col_idx]`          | 以整數位置存取                     |
-| 子集取值        | `df['Age']`                           | 取得單一欄                         |
-| 布林選擇        | `df[df['Age'] > 30]`                 | 年齡大於 30 的所有列                 |
-| 新增欄位        | `df['Child'] = df['Age'] < 16`       | 建立新欄位                         |
+| 標籤存取資料     | `df.loc[row_label, col_label]`       | 以索引／欄名存取               |
+| 位置存取資料     | `df.iloc[row_idx, col_idx]`          | 以整數位置存取                 |
+| 子集取值        | `df['Age']`                          | 取得單一欄                     |
+| 布林選擇        | `df[df['Age'] > 30]`                 | 年齡大於 30 的所有列            |
+| 新增欄位        | `df['Child'] = df['Age'] < 16`       | 建立新欄位                     |
+
+- loc & iloc差異
+    - 定位方式
+        - df.loc[...]：**標籤（label）**為基準，以索引或欄名來選取。
+        - df.iloc[...]：**位置（integer position）**為基準，以整數位置來選取。
+    - 切片（slice）行為
+        - loc[a:b]：包含終點標籤 b。
+        - iloc[i:j]：不包含終點位置 j 。
+    - 接受的輸入類型
+        - loc：標籤、標籤清單、布林陣列、條件篩選。
+        - iloc：整數、整數清單、整數陣列（不接受布林 Series）。
 
 ### C. 範例操作
 
 ```python
 # 取得第 5 列、第 2 欄
 value = df.iloc[4, 1]
-# 取出所有存活女性
+# 取出所有女性資料
 females = df.loc[df['Sex']=='female', :]
 # 加入 Child 欄位
 df['Child'] = df['Age'].apply(lambda x: 1 if x<16 else 0)
 ```
 
 ### D. Review Prompt
-如果要連續取多個欄位（Age, Fare），用哪種寫法效率更高？
+- 如果要連續取多個欄位（Age, Fare），用哪種寫法效率更高？
+    - df[['Age','Fare']] vs. df.loc[:, ['Age','Fare']]
+    - df[['Age','Fare']] 這種索引取用直接透過 __getitem__，在 Pandas 內部實作上少了一層「標籤 → 位置 → 再存取」的流程，相較於 loc 會略快一些。
+```python
+# 建議用法（較直覺且略快）
+subset = df[['Age', 'Fare']]
 
-新增欄位時，如何避免 SettingWithCopyWarning？
+# 等價但多一步解析定位器，執行略慢
+subset = df.loc[:, ['Age', 'Fare']]
+```
+> 學到「索引取用的內部實作機制」：不同 API 看起來功能相同，但實作路徑不同，影響效能。
 
+- 新增欄位時，如何避免 SettingWithCopyWarning？
+    - Pandas 有時對切出的「view」(共用記憶體的子集) 和「copy」(獨立記憶體) 不明確，直接賦值會出現警告。
+        - View（檢視）  
+            原 DataFrame 內部記憶體的「窗口」，修改時會反映到母體，也常導致 Pandas 無法判定是改 view 還是 copy，跳出 SettingWithCopyWarning。
+        - Copy（複製）  
+            完全分配新的記憶體空間，和原 DataFrame 無關，修改不會影響原物件，也不會有警告。
+```python
+# ❌ 錯誤示範：可能是在切片的 view 上操作
+sub = df[df['Age'] > 30]
+sub['is_senior'] = True           # ← 這裡常跳 warning
 
+# ✅ 正確做法：用 .loc 明確告訴 Pandas「在原 DataFrame 上」賦值
+df.loc[df['Age'] > 30, 'is_senior'] = True
+
+# 或，先確保操作對象是新的 copy
+sub = df[df['Age'] > 30].copy()
+sub['is_senior'] = True           # ← 這時不會 warning
+```
+> 學到「view vs. copy」的差別，以及如何用 .loc[...] 或 .copy() 明確掌控記憶體行為
 ## 3. Summary Functions and Maps
 
 ### A. 核心概念
