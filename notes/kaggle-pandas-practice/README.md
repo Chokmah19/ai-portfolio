@@ -82,8 +82,8 @@ all_data = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=Tru
 
 - loc & iloc差異
     - 定位方式
-        - df.loc[...]：**標籤（label）**為基準，以索引或欄名來選取。
-        - df.iloc[...]：**位置（integer position）**為基準，以整數位置來選取。
+        - df.loc[...]：標籤（label）為基準，以索引或欄名來選取。
+        - df.iloc[...]：位置（integer position）為基準，以整數位置來選取。
     - 切片（slice）行為
         - loc[a:b]：包含終點標籤 b。
         - iloc[i:j]：不包含終點位置 j 。
@@ -148,6 +148,11 @@ sub['is_senior'] = True           # ← 這時不會 warning
 | map 轉換        | `df['Sex'].map({'male':0,'female':1})` | 對 Series 進行對應轉換              |
 | apply 函數      | `df['Age'].apply(lambda x: x+1)`       | 對每筆資料套用函數                 |
 
+- map
+    - 只適用於 Series，對元素級別做轉換，傳入映射字典或單一參數函式，執行速度較快。
+- apply
+    - 可用於 Series 或 DataFrame，傳入的是對整個物件的函式，可做複雜邏輯，但速度較慢。
+
 ### C. 範例操作
 
 ```python
@@ -158,9 +163,27 @@ df['Sex_num'] = df['Sex'].map({'male':0,'female':1})
 ```
 
 ### D. Review Prompt
-當資料中有缺值時，mean() 會怎麼處理？如何跳過缺值？
+- 當資料中有缺值時，mean() 會怎麼處理？如何跳過缺值？
+    - 缺值的影響：當呼叫 df['col'].mean() 時，Pandas 會自動忽略 (skipna=True) 欄位中的 NaN，只使用非空值計算平均。
+    - 手動包含缺值：若想計算時不忽略缺值，可將參數 skipna=False：
+```python
+# 如何確認行為
+import pandas as pd
+s = pd.Series([1.0, 2.0, None, 4.0])
+print(s.mean())   # 結果 2.333...，自動跳過 None
+# 手動包含缺值
+s.mean(skipna=False)   # 結果 NaN
+```
+> 學到Pandas 聚合函式預設會跳過缺值，但可用參數調整；這避免了手動篩掉 NaN 的麻煩。
 
-map 與 replace 有什麼差異，何時用哪一個？
+- map 與 replace 有什麼差異，何時用哪一個？
+    - 選擇原則：若要依據對應表或函式逐一轉換、想保留原長度與順序，用 map；若只想替換少數特定值，用 replace。
+| 方法              | 主要功能                             | 何時使用                          |
+|----------------|----------------------------------------|----------------------------------|
+| .map()         | 對 Series 中每個元素套用對應的映射/函式   | 想轉換值為其他對應值或執行自訂函式  |
+| .replace()     | 依字典或列表直接替換指定值                | 想針對特定值做批次替換             |
+
+> map 最適合快速元素轉換；replace 用於批次替換具體值；apply 最靈活，可針對整列/整表做邏輯，但需衡量效能。
 
 ## 4. GroupBy and Sorting
 
