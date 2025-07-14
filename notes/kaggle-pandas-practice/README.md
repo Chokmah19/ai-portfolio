@@ -134,6 +134,7 @@ sub = df[df['Age'] > 30].copy()
 sub['is_senior'] = True           # ← 這時不會 warning
 ```
 > 學到「view vs. copy」的差別，以及如何用 .loc[...] 或 .copy() 明確掌控記憶體行為
+
 ## 3. Summary Functions and Maps
 
 ### A. 核心概念
@@ -178,7 +179,7 @@ s.mean(skipna=False)   # 結果 NaN
 
 - map 與 replace 有什麼差異，何時用哪一個？
     - 選擇原則：若要依據對應表或函式逐一轉換、想保留原長度與順序，用 map；若只想替換少數特定值，用 replace。
-    
+
 | 方法        | 主要功能                         | 何時使用                         |
 |-------------|----------------------------------|----------------------------------|
 | `.map()`    | 對 Series 中每個元素套用對應的映射或函式 | 想轉換值為其他對應值或執行自訂函式 |
@@ -212,10 +213,23 @@ top_fare = df.sort_values('Fare', ascending=False).head(10)
 ```
 
 ### D. Review Prompt
-如果要先排序再分群，指令順序怎麼寫？
+- 如果要先排序再分群，指令順序怎麼寫？
+    - 原因：有時我們希望對每個群體保留特定排序（如最新記錄），就需要先排序，再做 groupby()。
+```python
+# 排序在前，分群在後
+reviews_sorted = reviews.sort_values(by='points', ascending=False)
+top_review_per_winery = reviews_sorted.groupby('winery').first()
+```   
+> groupby().first() 會保留每組的第一列，搭配排序，就能抓出每個群體中最高分的紀錄。
 
-分群後要加上 reset_index() 的原因是？
-
+- 分群後要加上 reset_index() 的原因是？
+    - 預設情況：groupby() 的結果會將群組欄位變成新的索引 (index)。這樣雖可辨識每組，但不利於後續分析或與原表結合。
+```python
+# 加上 reset_index()：可把群組欄位恢復成一般欄位，不當作索引。
+reviews_sorted = reviews.sort_values(by='points', ascending=False)
+top_review_per_winery = reviews_sorted.groupby('winery').first()
+```  
+> 常在分組統計後使用 reset_index()，讓結果更清晰易讀，並方便後續合併、過濾等操作。
 
 ## 5. Data Types and Missing Values
 
