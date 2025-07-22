@@ -256,11 +256,26 @@ df['Age'].fillna(df['Age'].mean(), inplace=True)
 ```
 
 ### D. Review Prompt
-何時要用 dropna() 而不是 fillna()？
-
-如果只想填補部分列，subset 參數要怎麼用？
-
-
+- 何時要用 dropna() 而不是 fillna()？
+    - **刪 vs 補**：缺失值過多且難以推估，用 dropna()；資料仍有價值且可估計，用 fillna()。
+    - **dropna()**：刪除含 NaN 的列或欄  
+```python
+df.dropna()                           # 刪除任何含 NaN 的列
+df.dropna(axis=1, thresh=3)           # 保留至少 3 個非 NaN 值的欄
+df.dropna(subset=['Age'])             # 僅檢查 Age 欄，有 NaN 即刪除該列
+```
+    - fillna()：填補 NaN
+```python
+df['Age'] = df['Age'].fillna(df['Age'].mean())        # 用平均值填補
+df.loc[df['Age'].isna(), 'Age'] = 0                    # 精準定位列後填補
+``` 
+- 如果只想填補部分列，subset 參數要怎麼用？
+    - subset參數 
+        - 只在 dropna() 中使用，用來**指定要檢查的欄位**。
+        - Ex: df.dropna(subset=['Age']) → 只刪除 Age 欄是 NaN 的列。
+    - 只填補部分欄位，用法：
+        - df['Age'] = df['Age'].fillna(0)
+        - df.loc[條件, '欄名'] = 值 → 更靈活控制。
 
 ## 6. Renaming and Combining
 
