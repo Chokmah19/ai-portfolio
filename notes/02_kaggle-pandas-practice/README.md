@@ -303,6 +303,17 @@ merged = pd.merge(df1, df2, on='id', how='left')
 ```
 
 ### D. Review Prompt
-concat 與 merge 的差異是什麼？
+- concat 與 merge 的差異是什麼？
+    - concat()
+        - 單純把多個 DataFrame 上下或左右接起來（像「疊積木」），不考慮欄位值的關聯。
+        - 主要是**依照索引或欄位順序**進行串接
+        - 常用在把多個 CSV 檔的 DataFrame 合成一個
+    - merge()
+        - 根據一個或多個**key（鍵值欄位）**將資料表進行 **類似 SQL JOIN 的合併**
+        - 可選擇 inner / outer / left / right join
 
-如果要做 multiple-key 的 merge，要如何指定？
+> concat 適合合併**欄位完全相同**的資料集，merge 適合**根據欄位對應資料**
+
+- 如果要做 multiple-key 的 merge，要如何指定？
+    - 多鍵（multiple key）合併時，on 參數可以放**欄位名稱的列表**，只有當所有 key 值都相同時，資料列才會被合併。
+    - 只有 **key1 和 key2 兩欄值同時符合**才會合併
