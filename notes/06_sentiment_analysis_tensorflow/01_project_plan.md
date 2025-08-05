@@ -57,19 +57,19 @@
 使用者輸入文字或上傳檔案
 ↓
 文本前處理
-├─ 分詞
-├─ 去除雜訊
-└─ 去停用詞
+ ├─ 分詞
+ ├─ 去除雜訊
+ └─ 去停用詞
 ↓
 Embedding 嵌入層
-└─ Word2Vec / GloVe / BERT
+ └─ Word2Vec / GloVe / BERT
 ↓
 情緒分類模型
-└─ LSTM 或 Transformer
+ └─ LSTM 或 Transformer
 ↓
 輸出結果
-├─ 類別（正向／負向）
-└─ 信心分數
+ ├─ 類別（正向／負向）
+ └─ 信心分數
 ↓
 前端顯示或匯出報表
 
