@@ -11,14 +11,14 @@
 - **GroupBy 深入**  
     - 多重聚合 (.agg())  
     - 自訂聚合函式（lambda 或定義 function）
-    - 數值欄位分組（pd.cut）可用於將連續變數分類（如每 10 歲一組）
+    - 數值欄位分組（`pd.cut`）可用於將連續變數分類（如每 10 歲一組）
 - **交叉表 & Pivot Table**  
-    - pd.pivot_table() 
+    - `pd.pivot_table()` 
     - 線上或離線統計檢定前的資料整理
 - **時間序列操作**  
-    - pd.to_datetime()
-    - resample()
-    - rolling() 移動平均
+    - `pd.to_datetime()`
+    - `resample()`
+    - `rolling()` 移動平均
         - **rolling(window=N)**：以 N 個觀測值為一組計算統計量（例如平均值）
         - **窗口 (window)** 越小 → 越貼近原始資料
         - **窗口 (window)** 越大 → 趨勢更平滑，但短期波動會被削弱
@@ -27,10 +27,15 @@
 - **類別資料分析**
     - `.value_counts()`：計算每個類別的數量或比例（搭配 normalize）
     - `pd.crosstab()`：交叉表觀察兩個類別變數之間的關係（如登船港口 × 是否生還）
+- **數值欄位分組**
+    - `pd.cut()`：將連續變數（如年齡）分箱，觀察分組後的統計趨勢（如每 10 歲一組）
+- **缺失值處理**
+    - `.isnull()` / `.notnull()`：檢查欄位是否有缺值
+    - `.dropna()`、`.fillna()`：刪除或填補缺值
+    - 可搭配中位數、平均數、或分組平均補值
 - **數值標準化**
     - Z-score 標準化：計算 z = (x - 平均數) / 標準差，能讓不同單位的欄位可比較
     - Min-Max 標準化：將欄位壓縮到 [0, 1] 區間，常用於神經網路模型
-
 
 ## 📌 步驟紀錄
 
@@ -38,8 +43,10 @@
 2. GroupBy 多重聚合
 3. pivot_table 樞紐分析
 4. 時間序列重取樣與移動平均
-5. 缺值處理與補值（中位數 / 分組平均）
-6. 數值標準化（Z-score 與 Min-Max）
+5. 類別資料分析（value_counts / crosstab）
+6. 數值欄位分組（如年齡分組分析）
+7. 缺值處理與補值（中位數 / 分組平均）
+8. 數值標準化（Z-score 與 Min-Max）
 
 ## 🧠 心得筆記
 - 在練習Pandas的時候，除了可在本機 Jupyter Notebook 練習，也能在 Kaggle Notebook，按需求選擇，個人是在本機練習，然後發現 VS Code有套件(seaborn)內建 titanic 資料集，可以節省我下載再匯入的時間，方便很多，因此記錄下來
@@ -58,11 +65,23 @@
 - Seaborn 預設樣式好看，適合快速畫統計圖；Matplotlib 則適合做更多細部控制。
 - 群組長條圖適合比較類別資料的比例差異，直方圖觀察數值分佈，箱型圖則適合比較不同組別的數值範圍
 - 移動平均有助於觀察長期趨勢，窗口大小會影響平滑程度
+- 若用 `.fillna(..., inplace=True)` 遇到 Warning，可改用 `df['col'] = df['col'].fillna(...)` 比較穩定。
+- 分組補值方式（如依 pclass 補 age 平均）是兼顧整體趨勢與群組特徵的好方法。
+- Z-score 標準化可減少欄位尺度影響，有助於模型訓練時收斂更穩定。
+- Min-Max 標準化適合無極端值的欄位，尤其常見於 TensorFlow 模型前處理。
+- 不建議使用 max/min 為變數名稱，會覆蓋內建函數（建議用 fare_max, fare_min）。
+
 
 ## 🔹 小技巧
 - 在 Jupyter Notebook 的最後一行 不用加 print()，它會自動顯示回傳值。
+- `df[col].transform('mean')` 可對每列套用 group 的統計結果（常見於分組補值）
+- `.value_counts(normalize=True)` 可快速算出類別欄位的比例（範圍為 0~1）
 
 
 ## ✅ 實作成果
 - 分組後同時做多種統計（如均值、中位數、標準差）
 - 使用 pivot_table 對類別與數值欄位做快速交叉分析
+- 對時間序列資料使用 rolling 移動平均觀察趨勢變化
+- 建立 DatetimeIndex 並進行年度 resample 統計
+- 使用 pd.cut() 切分年齡欄位，分析不同年齡層的生還率
+- 對數值欄位進行標準化（Z-score 與 Min-Max）
