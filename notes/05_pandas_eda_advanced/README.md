@@ -9,7 +9,7 @@
 
 ## 💡 學習概念
 - **GroupBy 深入**  
-    - 多重聚合 (.agg())  
+    - 多重聚合 (`.agg()`)  
     - 自訂聚合函式（lambda 或定義 function）
     - 數值欄位分組（`pd.cut`）可用於將連續變數分類（如每 10 歲一組）
 - **交叉表 & Pivot Table**  
@@ -83,5 +83,5 @@
 - 使用 pivot_table 對類別與數值欄位做快速交叉分析
 - 對時間序列資料使用 rolling 移動平均觀察趨勢變化
 - 建立 DatetimeIndex 並進行年度 resample 統計
-- 使用 pd.cut() 切分年齡欄位，分析不同年齡層的生還率
+- 使用 `pd.cut()` 切分年齡欄位，分析不同年齡層的生還率
 - 對數值欄位進行標準化（Z-score 與 Min-Max）
