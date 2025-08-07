@@ -85,11 +85,11 @@ all_data = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=Tru
         - `df.loc[...]`：標籤（label）為基準，以索引或欄名來選取。
         - `df.iloc[...]`：位置（integer position）為基準，以整數位置來選取。
     - 切片（slice）行為
-        - loc[a:b]：包含終點標籤 b。
-        - iloc[i:j]：不包含終點位置 j 。
+        - `loc[a:b]`：包含終點標籤 b。
+        - `iloc[i:j]`：不包含終點位置 j 。
     - 接受的輸入類型
-        - loc：標籤、標籤清單、布林陣列、條件篩選。
-        - iloc：整數、整數清單、整數陣列（不接受布林 Series）。
+        - `loc`：標籤、標籤清單、布林陣列、條件篩選。
+        - `iloc`：整數、整數清單、整數陣列（不接受布林 Series）。
 
 ### C. 範例操作
 
@@ -104,8 +104,8 @@ df['Child'] = df['Age'].apply(lambda x: 1 if x<16 else 0)
 
 ### D. Review Prompt
 - 如果要連續取多個欄位（Age, Fare），用哪種寫法效率更高？
-    - df[['Age','Fare']] vs. df.loc[:, ['Age','Fare']]
-    - df[['Age','Fare']] 這種索引取用直接透過 __getitem__，在 Pandas 內部實作上少了一層「標籤 → 位置 → 再存取」的流程，相較於 loc 會略快一些。
+    - `df[['Age','Fare']]` vs. `df.loc[:, ['Age','Fare']]`
+    - `df[['Age','Fare']]` 這種索引取用直接透過 __getitem__，在 Pandas 內部實作上少了一層「標籤 → 位置 → 再存取」的流程，相較於 loc 會略快一些。
 ```python
 # 建議用法（較直覺且略快）
 subset = df[['Age', 'Fare']]
@@ -259,12 +259,12 @@ df['Age'].fillna(df['Age'].mean(), inplace=True)
 - 何時要用 `dropna()` 而不是 `fillna()`？
     - **刪 vs 補**：缺失值過多且難以推估，用 `dropna()`；資料仍有價值且可估計，用 `fillna()`。
     - **`dropna()`**：刪除含 NaN 的列或欄  
+    - `fillna()`：填補 NaN
 ```python
 df.dropna()                           # 刪除任何含 NaN 的列
 df.dropna(axis=1, thresh=3)           # 保留至少 3 個非 NaN 值的欄
 df.dropna(subset=['Age'])             # 僅檢查 Age 欄，有 NaN 即刪除該列
 ```
-    - `fillna()`：填補 NaN
 ```python
 df['Age'] = df['Age'].fillna(df['Age'].mean())        # 用平均值填補
 df.loc[df['Age'].isna(), 'Age'] = 0                    # 精準定位列後填補
