@@ -29,8 +29,8 @@ df.to_excel('titanic.xlsx', index=False)
 
 ### D. Review Prompt
 - 如何在讀取時直接篩掉空值過多的欄位？
-    - 在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 pd.read_csv() 讀取檔案。
-    - 接著檢查各欄的空值比例，若發現某些欄位多數值為 NaN，就可用 dropna(axis=1, thresh=…) 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。
+    - 在讀取 CSV 時，Pandas 並沒有內建參數直接「跳過缺失值過多的欄位」，因此常用作法是先讀入整個檔案，然後再刪除包含太多 NaN 的欄位。可以先用 `pd.read_csv()` 讀取檔案。
+    - 接著檢查各欄的空值比例，若發現某些欄位多數值為 NaN，就可用 `dropna(axis=1, thresh=…)` 刪除這些欄。axis=1 表示按欄刪除，thresh 則是「至少要有多少個非空值才保留此欄」的閾值。
     - 如果想按照百分比丟棄缺失值過多的欄，也可以將 thresh 設為 int(df.shape[0]*ratio)
 ```python
 df = pd.read_csv("data.csv")  # 讀入 CSV 為 DataFrame
@@ -82,8 +82,8 @@ all_data = pd.concat([pd.read_csv(file) for file in csv_files], ignore_index=Tru
 
 - loc & iloc差異
     - 定位方式
-        - df.loc[...]：標籤（label）為基準，以索引或欄名來選取。
-        - df.iloc[...]：位置（integer position）為基準，以整數位置來選取。
+        - `df.loc[...]`：標籤（label）為基準，以索引或欄名來選取。
+        - `df.iloc[...]`：位置（integer position）為基準，以整數位置來選取。
     - 切片（slice）行為
         - loc[a:b]：包含終點標籤 b。
         - iloc[i:j]：不包含終點位置 j 。
@@ -164,8 +164,8 @@ df['Sex_num'] = df['Sex'].map({'male':0,'female':1})
 ```
 
 ### D. Review Prompt
-- 當資料中有缺值時，mean() 會怎麼處理？如何跳過缺值？
-    - 缺值的影響：當呼叫 df['col'].mean() 時，Pandas 會自動忽略 (skipna=True) 欄位中的 NaN，只使用非空值計算平均。
+- 當資料中有缺值時，`mean()` 會怎麼處理？如何跳過缺值？
+    - 缺值的影響：當呼叫 `df['col'].mean()` 時，Pandas 會自動忽略 (skipna=True) 欄位中的 NaN，只使用非空值計算平均。
     - 手動包含缺值：若想計算時不忽略缺值，可將參數 skipna=False：
 ```python
 # 如何確認行為
@@ -220,16 +220,16 @@ top_fare = df.sort_values('Fare', ascending=False).head(10)
 reviews_sorted = reviews.sort_values(by='points', ascending=False)
 top_review_per_winery = reviews_sorted.groupby('winery').first()
 ```   
-> groupby().first() 會保留每組的第一列，搭配排序，就能抓出每個群體中最高分的紀錄。
+> `groupby().first()` 會保留每組的第一列，搭配排序，就能抓出每個群體中最高分的紀錄。
 
-- 分群後要加上 reset_index() 的原因是？
-    - 預設情況：groupby() 的結果會將群組欄位變成新的索引 (index)。這樣雖可辨識每組，但不利於後續分析或與原表結合。
+- 分群後要加上 `reset_index()` 的原因是？
+    - 預設情況：`groupby()` 的結果會將群組欄位變成新的索引 (index)。這樣雖可辨識每組，但不利於後續分析或與原表結合。
 ```python
 # 加上 reset_index()：可把群組欄位恢復成一般欄位，不當作索引。
 reviews_sorted = reviews.sort_values(by='points', ascending=False)
 top_review_per_winery = reviews_sorted.groupby('winery').first()
 ```  
-> 常在分組統計後使用 reset_index()，讓結果更清晰易讀，並方便後續合併、過濾等操作。
+> 常在分組統計後使用 `reset_index()`，讓結果更清晰易讀，並方便後續合併、過濾等操作。
 
 ## 5. Data Types and Missing Values
 
@@ -256,26 +256,26 @@ df['Age'].fillna(df['Age'].mean(), inplace=True)
 ```
 
 ### D. Review Prompt
-- 何時要用 dropna() 而不是 fillna()？
-    - **刪 vs 補**：缺失值過多且難以推估，用 dropna()；資料仍有價值且可估計，用 fillna()。
-    - **dropna()**：刪除含 NaN 的列或欄  
+- 何時要用 `dropna()` 而不是 `fillna()`？
+    - **刪 vs 補**：缺失值過多且難以推估，用 `dropna()`；資料仍有價值且可估計，用 `fillna()`。
+    - **`dropna()`**：刪除含 NaN 的列或欄  
 ```python
 df.dropna()                           # 刪除任何含 NaN 的列
 df.dropna(axis=1, thresh=3)           # 保留至少 3 個非 NaN 值的欄
 df.dropna(subset=['Age'])             # 僅檢查 Age 欄，有 NaN 即刪除該列
 ```
-    - fillna()：填補 NaN
+    - `fillna()`：填補 NaN
 ```python
 df['Age'] = df['Age'].fillna(df['Age'].mean())        # 用平均值填補
 df.loc[df['Age'].isna(), 'Age'] = 0                    # 精準定位列後填補
 ``` 
 - 如果只想填補部分列，subset 參數要怎麼用？
     - subset參數 
-        - 只在 dropna() 中使用，用來**指定要檢查的欄位**。
-        - Ex: df.dropna(subset=['Age']) → 只刪除 Age 欄是 NaN 的列。
+        - 只在 `dropna()` 中使用，用來**指定要檢查的欄位**。
+        - Ex: `df.dropna(subset=['Age'])` → 只刪除 Age 欄是 NaN 的列。
     - 只填補部分欄位，用法：
-        - df['Age'] = df['Age'].fillna(0)
-        - df.loc[條件, '欄名'] = 值 → 更靈活控制。
+        - `df['Age'] = df['Age'].fillna(0)`
+        - `df.loc[條件, '欄名']` = 值 → 更靈活控制。
 
 ## 6. Renaming and Combining
 
@@ -304,11 +304,11 @@ merged = pd.merge(df1, df2, on='id', how='left')
 
 ### D. Review Prompt
 - concat 與 merge 的差異是什麼？
-    - concat()
+    - `concat()`
         - 單純把多個 DataFrame 上下或左右接起來（像「疊積木」），不考慮欄位值的關聯。
         - 主要是**依照索引或欄位順序**進行串接
         - 常用在把多個 CSV 檔的 DataFrame 合成一個
-    - merge()
+    - `merge()`
         - 根據一個或多個**key（鍵值欄位）**將資料表進行 **類似 SQL JOIN 的合併**
         - 可選擇 inner / outer / left / right join
 
