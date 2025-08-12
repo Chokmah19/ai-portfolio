@@ -103,8 +103,68 @@ df['clean_text'] = df['clean_tokens'].apply(lambda tokens: ' '.join(tokens))
 
 # 建立向量器，限制最多 10,000 個詞彙
 vectorizer = CountVectorizer(max_features=10000)
-
-# 將每筆評論轉為向量（稀疏矩陣格式）
 X = vectorizer.fit_transform(df['clean_text'])
 
 print(X.shape)  # ➜ (50000, 10000)
+```
+
+## ℹ️ 3. 避免資料外洩（Data Leakage）
+
+如果在切分資料集之前就用全部資料來 `fit` 向量器，測試集的詞彙資訊會提前被模型「偷看」，導致測試結果過於樂觀，這就是資料外洩。
+
+---
+
+### 🗒️ 正確流程
+
+1. 先用 `train_test_split` 切成訓練集與測試集（同時切文字與標籤）。
+2. 只在訓練集的文字上 `fit` 向量器。
+3. 測試集只用向量器的 `transform` 方法轉換，不再重新 `fit`。
+
+### ✅ 重點程式碼
+
+```python
+from sklearn.model_selection import train_test_split
+
+X_text_train, X_text_test, y_train, y_test = train_test_split(
+    df['clean_text'], df['label'],
+    test_size=0.2, random_state=9, stratify=df['label']
+)
+
+cv = CountVectorizer(max_features=10000)
+X_train = cv.fit_transform(X_text_train)
+X_test  = cv.transform(X_text_test)
+```
+
+## ℹ️ 4. 保存處理後的資料（Artifacts）
+
+為了方便後續模型訓練與部署，可以將向量器與切分後的資料存成檔案，下次直接載入使用。
+
+---
+
+### ✅ 重點程式碼
+
+```python
+import os, joblib
+from scipy import sparse
+
+os.makedirs("artifacts", exist_ok=True)
+joblib.dump(cv, "artifacts/vectorizer.joblib")
+sparse.save_npz("artifacts/X_train.npz", X_train)
+sparse.save_npz("artifacts/X_test.npz",  X_test)
+y_train.to_csv("artifacts/y_train.csv", index=False)
+y_test.to_csv("artifacts/y_test.csv", index=False)
+```
+
+- 產出物：
+    - `vectorizer.joblib`：已訓練好的向量器（詞表與轉換規則）
+    - `X_train.npz`、`X_test.npz`：向量化後的特徵
+    - `y_train.csv`、`y_test.csv`：對應的標籤
+
+
+## ✔️ 5. 驗收檢查清單
+
+- ☑️clean_text 處理無缺值
+- ☑️先切分資料再向量化
+- ☑️stratify 保持標籤比例一致
+- ☑️向量器只在訓練集 fit
+- ☑️所有檔案已正確儲存到 artifacts/
