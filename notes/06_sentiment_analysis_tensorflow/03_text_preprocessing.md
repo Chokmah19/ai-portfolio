@@ -160,8 +160,18 @@ y_test.to_csv("artifacts/y_test.csv", index=False)
     - `X_train.npz`、`X_test.npz`：向量化後的特徵
     - `y_train.csv`、`y_test.csv`：對應的標籤
 
+## ℹ️ 5. Baseline 模型結果（Logistic Regression）
 
-## ✔️ 5. 驗收檢查清單
+- **Train Accuracy**: 0.9747
+- **Test Accuracy**: 0.8664
+- **Precision (0/1)**: 0.8671 / 0.8657
+- **Recall (0/1)**: 0.8654 / 0.8674
+- **F1-score (0/1)**: 0.8663 / 0.8665
+
+> 結論：測試集表現達到 86.64%，指標平衡，略有過擬合但可接受，作為後續優化的基準。
+
+
+## ✔️ 6. 驗收檢查清單
 
 - ☑️clean_text 處理無缺值
 - ☑️先切分資料再向量化
