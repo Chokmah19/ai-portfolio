@@ -1,0 +1,10 @@
+{
+  "model": "LogisticRegression",
+  "vectorizer": "CountVectorizer",
+  "max_features": 10000,
+  "solver": "liblinear",
+  "C": 0.1,
+  "train_accuracy": 0.946325,
+  "test_accuracy": 0.8805,
+  "timestamp": "2025-08-22 18:27:52"
+}
